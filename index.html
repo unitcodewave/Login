@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Space XMD Hosting</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<h1>🚀 Space XMD Hosting FREE</h1>
+
+<input type="text" id="username" placeholder="GitHub Username">
+<button onclick="checkFork()">Check Repo</button>
+
+<div id="actions" style="margin-top:20px;"></div>
+<div id="logs"></div>
+
+<script>
+const actions = document.getElementById("actions");
+const logs = document.getElementById("logs");
+
+function log(msg) {
+    logs.textContent += msg + "\n";
+    logs.scrollTop = logs.scrollHeight;
+}
+
+async function checkFork() {
+    const username = document.getElementById("username").value.trim();
+    if (!username) { alert("Enter username"); return; }
+
+    log("🔍 Checking fork...");
+    const res = await fetch("/checkFork", {
+        method:"POST",
+        headers: {"Content-Type":"application/json"},
+        body: JSON.stringify({username})
+    });
+    const data = await res.json();
+    actions.innerHTML = "";
+
+    if(data.forked) {
+        log("✅ Repo already forked!");
+        createDeployButtons(data.repo);
+    } else {
+        log("⚠️ Repo not forked yet");
+        const forkBtn = document.createElement("button");
+        forkBtn.textContent = "Fork Space-XMD";
+        forkBtn.onclick = async () => {
+            log("⏳ Forking repo...");
+            const forkRes = await fetch("/fork", {
+                method:"POST",
+                headers: {"Content-Type":"application/json"},
+                body: JSON.stringify({username})
+            });
+            const forkData = await forkRes.json();
+            if(forkData.success) {
+                log("✅ Repo forked!");
+                createDeployButtons(forkData.repo);
+            } else {
+                log("❌ Fork failed: " + forkData.error);
+            }
+        };
+        actions.appendChild(forkBtn);
+    }
+}
+
+function createDeployButtons(repoUrl) {
+    actions.innerHTML = "";
+
+    const deployBtn = document.createElement("button");
+    deployBtn.textContent = "Deploy to Render";
+    deployBtn.onclick = () => deployBot(repoUrl);
+    actions.appendChild(deployBtn);
+
+    const stopBtn = document.createElement("button");
+    stopBtn.textContent = "Stop Deployment";
+    stopBtn.onclick = () => log("🛑 Stop deployment - manage manually in Render dashboard");
+    actions.appendChild(stopBtn);
+}
+
+async function deployBot(repoUrl) {
+    log("🚀 Starting deployment...");
+
+    const res = await fetch("/deploy", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ repoUrl })
+    });
+
+    const reader = res.body.getReader();
+    const decoder = new TextDecoder();
+    while(true) {
+        const { value, done } = await reader.read();
+        if(done) break;
+        log(decoder.decode(value));
+    }
+}
+</script>
+
+</body>
+</html>
