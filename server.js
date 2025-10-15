@@ -15,8 +15,8 @@ const ADMIN_PASSWORD = "supersecureadminpass"; // change this securely
 const transporter = nodemailer.createTransport({
     service: "gmail",
     auth: {
-        user: "brightchibondo01@gmail.com", // your Gmail
-        pass: "bhczwpmnqxkkddrs"            // Gmail app password
+        user: "brightchibondo00@gmail.com", // your Gmail
+        pass: "qsglwsxhnayflftk"            // Gmail app password
     }
 });
 
