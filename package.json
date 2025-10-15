@@ -1,16 +1,20 @@
 {
-  "name": "space-xmd-host",
+  "name": "codewave-web-hosting",
   "version": "1.0.0",
-  "description": "Space XMD bot hosting platform",
+  "description": "🌐 Codewave Web Hosting - Developed by Iconic Tech",
   "main": "server.js",
   "scripts": {
-    "start": "node server.js"
+    "start": "node server.js",
+    "dev": "nodemon server.js"
   },
   "dependencies": {
-    "express": "^4.18.2",
     "cors": "^2.8.5",
-        "dotenv": "^16.3.1",
-    "node-fetch": "^2.6.11",
-    "body-parser": "^1.20.2"
-  }
+    "express": "^4.18.2",
+    "multer": "1.4.5-lts.1"
+  },
+  "devDependencies": {
+    "nodemon": "^3.0.1"
+  },
+  "author": "Iconic Tech",
+  "license": "MIT"
 }
